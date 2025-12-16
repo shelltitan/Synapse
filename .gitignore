@@ -1,0 +1,16 @@
+/build*
+/.vscode
+/cpm_modules
+.DS_Store
+
+*.bak
+
+/debug_build
+
+# CLion project files
+.idea
+cmake-build-*
+/.vs
+/out
+
+CMakeUserPresets.json
