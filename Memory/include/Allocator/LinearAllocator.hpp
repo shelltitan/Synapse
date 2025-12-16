@@ -10,7 +10,7 @@
 
 namespace Synapse::Memory::Allocator {
     /**
-     * @brief Linear allocator for bulk allocations that are reset together.
+     * @brief Linear allocator (or bump allocator) for bulk allocations that are reset together.
      *
      * Grows forward within a fixed buffer and supports very fast allocations with no
      * per-object deallocation. Each allocation advances a cursor; `Reset()` rewinds

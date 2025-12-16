@@ -8,16 +8,26 @@
 
 namespace Synapse::Memory::Allocator {
     /**
-     * @brief Simple bump-pointer allocator with optional LIFO validation.
+     * @brief Stack allocator with optional LIFO validation.
      *
-     * Grows linearly within a fixed buffer and releases memory only via
-     * `Reset()`. When `STACK_LIFO_CHECK` is enabled, deallocations must occur
+     * A stack allocator that supports very fast allocations by bumping a cursor
+     * forward within a fixed buffer. Each allocation aligns the current cursor, returns
+     * the aligned address to the caller (after any reserved prefix), and advances the
+     * cursor.
+     *
+     * Overhead is low, but each allocation stores a small header (16 bytes) immediately
+     * before the returned pointer. The header records the adjustment/padding needed to
+     * satisfy alignment so that `Deallocate()` can rewind the cursor correctly.
+     *
+     * Deallocation is stack-like (LIFO): you may only free the most recently allocated
+     * block, in exact reverse order of allocation. Internal fragmentation is limited to
+     * alignment padding plus the per-allocation header.
+     *
+     * When `STACK_LIFO_CHECK` is enabled, deallocations are validated and must occur
      * strictly in reverse order of allocations.
      *
-     * Memory layout:
-     * Stack ID | Allocation size | Reset pointer | Cannary Front | User Memory | Cannary Back
-     *
-     * @tparam TOffset Number of bytes reserved before the returned user pointer.
+     * @tparam TOffset Number of bytes reserved immediately before the returned user pointer
+     *                 (e.g., for a small header, metadata, or back-pointer).
      */
     template <std::size_t TOffset>
     class StackAllocator {
@@ -79,7 +89,7 @@ namespace Synapse::Memory::Allocator {
             }
 
 #ifdef STACK_LIFO_CHECK
-                    ++m_lifo_check_count;
+            ++m_lifo_check_count;
 #endif
             // Store header
             (void)std::copy_n(std::bit_cast<const std::byte*>(&header), sizeof(AllocationHeader), m_current);
@@ -103,8 +113,8 @@ namespace Synapse::Memory::Allocator {
             AllocationHeader allocation_header{};
             (void)std::copy_n(static_cast<const std::byte*>(ptr) - sizeof(AllocationHeader), sizeof(AllocationHeader), std::bit_cast<std::byte*>(&allocation_header));
 #ifdef STACK_LIFO_CHECK
-                    ASSERT(allocation_header.stack_lifo_id == m_lifo_check_count, "Stack deallacation must be LIFO order.");
-                    --m_lifo_check_count;
+            ASSERT(allocation_header.stack_lifo_id == m_lifo_check_count, "Stack deallacation must be LIFO order.");
+            --m_lifo_check_count;
 #endif
             m_current = allocation_header.allocation_reset_ptr;
         }

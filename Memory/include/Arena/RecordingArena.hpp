@@ -31,6 +31,7 @@ namespace Synapse::Memory::Arena {
         [[nodiscard]] auto Allocate(const std::size_t size, const std::size_t alignment,
                 const std::source_location &source_location = std::source_location::current()) noexcept -> std::byte * {
             // send info via TCP/IP...
+            /// \todo add network
             return m_arena.Allocate(size, alignment, source_location);
         }
 
@@ -39,6 +40,7 @@ namespace Synapse::Memory::Arena {
          */
         auto Deallocate(void *ptr) noexcept -> void {
             // send info via TCP/IP...
+            /// \todo add network
             m_arena.Deallocate(ptr);
         }
 

@@ -7,7 +7,7 @@
 
 namespace Synapse::Memory::Allocator {
     /**
-     * @brief Fixed-size free-list allocator for uniformly sized elements.
+     * @brief Pool allocator (or fixed-size free-list allocator) for uniformly sized elements.
      *
      * Builds a linked list of equally sized blocks on construction and
      * provides O(1) allocate/deallocate by manipulating the head pointer.
