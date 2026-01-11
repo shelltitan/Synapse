@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <limits>
 #include <type_traits>
+#include <catch2/catch_test_macros.hpp>
 using namespace Synapse::Serialise;
 
 TEST_CASE("BitsRequired - Valid range calculations", "[bit_utils]") {
