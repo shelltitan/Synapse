@@ -1,7 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <cstddef>
 #include <cstdint>
-#include <memory> // for std::aligned_alloc or std::unique_ptr
+#include <memory>
 #include <vector>
 #include <bit>
 #include <AlignmentUtility.hpp>

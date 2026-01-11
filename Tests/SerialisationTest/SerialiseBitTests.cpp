@@ -1,8 +1,7 @@
 ﻿#include <SerialiseBit.hpp>
-#include <catch2/catch_test_macros.hpp>
+#include <array>
 #include <cstdint>
 #include <limits>
-#include <array>
 #include <type_traits>
 using namespace Synapse::Serialise;
 
