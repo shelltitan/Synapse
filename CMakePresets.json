@@ -14,7 +14,8 @@
 				"CMAKE_CXX_STANDARD": "23",
 				"CMAKE_CXX_STANDARD_REQUIRED": "ON",
 				"CMAKE_CXX_EXTENSIONS": "OFF",
-				"CMAKE_CXX_SCAN_FOR_MODULES": "ON"
+				"CMAKE_CXX_SCAN_FOR_MODULES": "ON",
+				"CMAKE_INTERPROCEDURAL_OPTIMIZATION": "ON"
 			}
 		},
 		{
@@ -64,61 +65,61 @@
 				"CMAKE_CXX_FLAGS": "/W4 /WX /Zc:__cplusplus /Zc:preprocessor /Zc:externConstexpr /Zc:throwingNew /permissive- /volatile:iso /EHsc"
 			}
 		},
-	{
-		"name": "clang-cl",
-		"hidden": true,
-		"toolchainFile": "${sourceDir}/cmake/toolchain-clang-cl.cmake",
-		"cacheVariables": {
-			"CMAKE_CXX_FLAGS": "-Weverything -Werror"
-        }
-	},
-	{
-		"name": "msvc",
-		"hidden": true,
-		"toolchainFile": "${sourceDir}/cmake/toolchain-msvc.cmake"
-	},
-    {
-		"name": "win-clang-x64-debug",
-		"displayName": "Windows x64 debug, Clang-cl with Ninja",
-		"description": "64-bit debug build using Clang-cl and Ninja on Windows",
-		"inherits": [ "base", "windows", "debug", "ninja", "clang-cl" ]
-    },
-	{
-		"name": "win-clang-x64-release",
-		"displayName": "Windows x64 release, Clang-cl with Ninja",
-		"description": "64-bit release build using Clang-cl and Ninja on Windows",
-		"inherits": [ "base", "windows", "release", "ninja", "clang-cl" ]
-    },
-	{
-		"name": "win-msvc-ninja-x64-debug",
-		"displayName": "Windows x64 debug, MSVC with Ninja",
-		"description": "64-bit debug build using MSVC and Ninja on Windows",
-		"inherits": [ "base", "windows", "debug", "ninja", "msvc" ]
-	},
-	{
-		"name": "win-msvc-ninja-x64-release",
-		"displayName": "Windows x64 release, MSVC with Ninja",
-		"description": "64-bit release build using MSVC and Ninja on Windows",
-		"inherits": [ "base", "windows", "release", "ninja", "msvc" ]
-	},
-	{
-		"name": "win-msvc-vs-x64-multiconfig",
-		"displayName": "Windows x64 multiconfig, MSVC with Visual Studio 17 2022",
-		"description": "64-bit multiconfig build using MSVC and Visual Studio 17 2022 on Windows",
-		"inherits": [ "base", "windows", "vs" ]
-	},
-	{
-		"name": "linux-clang-x64-debug",
-		"displayName": "Linux x64 debug, Clang with Ninja",
-		"description": "64-bit debug build using Ninja and clang on Linux",
-		"inherits": [ "base", "linux", "debug", "ninja" ]
-	},
-	{
-		"name": "linux-clang-x64-release",
-		"displayName": "Linux x64 release, Clang with Ninja",
-		"description": "64-bit release build using Ninja and clang on Linux",
-		"inherits": [ "base", "linux", "release", "ninja" ]
-	}
+		{
+			"name": "clang-cl",
+			"hidden": true,
+			"toolchainFile": "${sourceDir}/cmake/toolchain-clang-cl.cmake",
+			"cacheVariables": {
+				"CMAKE_CXX_FLAGS": "-Weverything -Werror"
+			}
+		},
+		{
+			"name": "msvc",
+			"hidden": true,
+			"toolchainFile": "${sourceDir}/cmake/toolchain-msvc.cmake"
+		},
+		{
+			"name": "win-clang-x64-debug",
+			"displayName": "Windows x64 debug, Clang-cl with Ninja",
+			"description": "64-bit debug build using Clang-cl and Ninja on Windows",
+			"inherits": [ "base", "windows", "debug", "ninja", "clang-cl" ]
+		},
+		{
+			"name": "win-clang-x64-release",
+			"displayName": "Windows x64 release, Clang-cl with Ninja",
+			"description": "64-bit release build using Clang-cl and Ninja on Windows",
+			"inherits": [ "base", "windows", "release", "ninja", "clang-cl" ]
+		},
+		{
+			"name": "win-msvc-ninja-x64-debug",
+			"displayName": "Windows x64 debug, MSVC with Ninja",
+			"description": "64-bit debug build using MSVC and Ninja on Windows",
+			"inherits": [ "base", "windows", "debug", "ninja", "msvc" ]
+		},
+		{
+			"name": "win-msvc-ninja-x64-release",
+			"displayName": "Windows x64 release, MSVC with Ninja",
+			"description": "64-bit release build using MSVC and Ninja on Windows",
+			"inherits": [ "base", "windows", "release", "ninja", "msvc" ]
+		},
+		{
+			"name": "win-msvc-vs-x64-multiconfig",
+			"displayName": "Windows x64 multiconfig, MSVC with Visual Studio 17 2022",
+			"description": "64-bit multiconfig build using MSVC and Visual Studio 17 2022 on Windows",
+			"inherits": [ "base", "windows", "vs" ]
+		},
+		{
+			"name": "linux-clang-x64-debug",
+			"displayName": "Linux x64 debug, Clang with Ninja",
+			"description": "64-bit debug build using Ninja and clang on Linux",
+			"inherits": [ "base", "linux", "debug", "ninja" ]
+		},
+		{
+			"name": "linux-clang-x64-release",
+			"displayName": "Linux x64 release, Clang with Ninja",
+			"description": "64-bit release build using Ninja and clang on Linux",
+			"inherits": [ "base", "linux", "release", "ninja" ]
+		}
 	],
 	"buildPresets": [
 		{
