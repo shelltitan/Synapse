@@ -3,8 +3,7 @@
 #include <atomic>
 #include <new>
 #include <Concurrent/AtomicQueueCommon.hpp>
-
-
+#include <bit>
 
 namespace Synapse::STL::Concurrent {
     template <typename TType>
@@ -42,7 +41,7 @@ namespace Synapse::STL::Concurrent {
                 Base::template DoPushAtomic<TType>(element, q_element); // we can probably do this with constexpr between lock-free and non-lock free
             }
 
-            static constexpr unsigned int m_size = TMinimiseContention ? Maths::RoundUpToPowerOf2(TSize) : TSize;
+            static constexpr unsigned int m_size = TMinimiseContention ? std::bit_ceil(TSize) : TSize;
             static constexpr int m_shuffle_bits =
                     GetCacheIndexSwapBitShift<TMinimiseContention, m_size, sizeof(std::atomic<TType>)>();
             static constexpr bool m_total_order = TTotalOrder;
