@@ -1,74 +1,56 @@
 # This toolchain is assumes it is being used on a Windows machine targeting Windows, and used with ninja for buildsystem generation.
 # The toolchain also selects the latest available Visual Studio toolchain, which perplexingly means the latest updated or installed.
-# CMAKE_SYSTEM_PROCESSOR The processor to compiler for. One of 'X86', 'AMD64', 'ARM', 'ARM64'. Defaults to ${CMAKE_HOST_SYSTEM_PROCESSOR}.
 include_guard(GLOBAL)
 
-# If `CMAKE_HOST_SYSTEM_NAME` is not 'Windows', there's nothing to do.
-if(NOT (CMAKE_HOST_SYSTEM_NAME STREQUAL Windows))
+# Host system must be Windows and x64
+if(NOT (CMAKE_HOST_SYSTEM_NAME STREQUAL Windows) OR NOT (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL AMD64))
     return()
 endif()
 
 list(APPEND CMAKE_TRY_COMPILE_PLATFORM_VARIABLES
-    CMAKE_SYSTEM_PROCESSOR
-    CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE
-    CMAKE_VS_PLATFORM_NAME
-    MSVS_INSTALL_PATH
-    CMAKE_VS_PLATFORM_TOOLSET_VERSION
-    CMAKE_WINDOWS_KITS_10_DIR
-    CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION
-    VS_TOOLSET_PATH
+        CMAKE_SYSTEM_PROCESSOR
+        CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE
+        CMAKE_VS_PLATFORM_NAME
+        MSVS_INSTALL_PATH
+        CMAKE_VS_PLATFORM_TOOLSET_VERSION
+        CMAKE_WINDOWS_KITS_10_DIR
+        CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION
+        VS_TOOLSET_PATH
+        CMAKE_CXX_SCAN_FOR_MODULES
+        CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS
 )
 
-# Host arch for MSVC host tools
-if(NOT DEFINED CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE)
-    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL ARM64)
-        set(CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE "ARM64")
-    else()
-        set(CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE "x64")
-    endif()
-endif()
+# This is for the Visual Studio Generator
+set(CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE "x64")
+set(CMAKE_VS_PLATFORM_NAME "x64")
 
-## Target triplet (CPU family/model, vendor, and OS name)
-if (NOT DEFINED CMAKE_SYSTEM_PROCESSOR)
-    set(CMAKE_SYSTEM_PROCESSOR "${CMAKE_HOST_SYSTEM_PROCESSOR}")
-endif()
+# Target triplet (CPU family/model, vendor, and OS name)
+set(CMAKE_SYSTEM_PROCESSOR "AMD64")
+set(CMAKE_SYSTEM_NAME "${CMAKE_HOST_SYSTEM_NAME}")
+set(CMAKE_SYSTEM_VERSION "${CMAKE_HOST_SYSTEM_VERSION}")
+set(CMAKE_CROSSCOMPILING OFF)
+set(CMAKE_C_COMPILER_TARGET   x86_64-pc-windows-msvc)
+set(CMAKE_CXX_COMPILER_TARGET x86_64-pc-windows-msvc)
 
-# If `CMAKE_SYSTEM_PROCESSOR` is not equal to `CMAKE_HOST_SYSTEM_PROCESSOR`, this is cross-compilation.
-# CMake expects `CMAKE_SYSTEM_NAME` to be set to reflect cross-compilation.
-if(NOT (CMAKE_SYSTEM_PROCESSOR STREQUAL "${CMAKE_HOST_SYSTEM_PROCESSOR}"))
-    set(CMAKE_SYSTEM_NAME "${CMAKE_HOST_SYSTEM_NAME}")
-    set(CMAKE_SYSTEM_VERSION "${CMAKE_HOST_SYSTEM_VERSION}")
-endif()
 
-# Map processor to VS platform name
-if (NOT DEFINED CMAKE_VS_PLATFORM_NAME)
-    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64")
-        set(CMAKE_VS_PLATFORM_NAME "x64")
-    elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64")
-        set(CMAKE_VS_PLATFORM_NAME "ARM64")
-    else()
-        message(FATAL_ERROR "Unable identify compiler architecture for CMAKE_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR} ${CMAKE_HOST_SYSTEM_PROCESSOR}")
-    endif()
-endif()
-
-## MSVC installation path and finding toolset
+# MSVC installation path and finding toolset for libraries
 # Locate Visual Studio via vswhere
 find_program(
-    VSWHERE_EXECUTABLE
-    NAMES vswhere vswhere.exe
-    DOC "Visual Studio Locator"
-    HINTS "$ENV{ProgramFiles\(x86\)}/Microsoft Visual Studio/Installer" 
-    REQUIRED
+        VSWHERE_EXECUTABLE
+        NAMES vswhere vswhere.exe
+        DOC "Visual Studio Locator"
+        HINTS "$ENV{ProgramFiles\(x86\)}/Microsoft Visual Studio/Installer"
+        REQUIRED
 )
 
 message(CHECK_START "Searching for Visual Studio")
 execute_process(COMMAND "${VSWHERE_EXECUTABLE}" -nologo -nocolor
-    -format json
-    -latest # unfortunately this not the latest but the last installed or updated version
-    -utf8
-    ENCODING UTF-8
-    OUTPUT_VARIABLE _vs_json
-    OUTPUT_STRIP_TRAILING_WHITESPACE
+        -format json
+        -latest # unfortunately this not the latest but the last installed or updated version
+        -utf8
+        ENCODING UTF-8
+        OUTPUT_VARIABLE _vs_json
+        OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
 string(JSON _len LENGTH "${_vs_json}")
@@ -98,10 +80,10 @@ set(VS_TOOLSET_PATH "${MSVS_MSVC_PATH}/${CMAKE_VS_PLATFORM_TOOLSET_VERSION}")
 ## Windows SDK Path
 message(CHECK_START "Searching for Windows SDK Root Directory")
 cmake_host_system_information(
-    RESULT CMAKE_WINDOWS_KITS_10_DIR
-    QUERY
-    WINDOWS_REGISTRY "HKLM/SOFTWARE/Microsoft/Windows Kits/Installed Roots" VALUE "KitsRoot10" VIEW BOTH
-    ERROR_VARIABLE _wsdk_err
+        RESULT CMAKE_WINDOWS_KITS_10_DIR
+        QUERY
+        WINDOWS_REGISTRY "HKLM/SOFTWARE/Microsoft/Windows Kits/Installed Roots" VALUE "KitsRoot10" VIEW BOTH
+        ERROR_VARIABLE _wsdk_err
 )
 if(_wsdk_err OR NOT CMAKE_WINDOWS_KITS_10_DIR)
     message(CHECK_FAIL "not found: ${_wsdk_err}")
@@ -112,12 +94,12 @@ message(CHECK_PASS "found: ${CMAKE_WINDOWS_KITS_10_DIR}")
 
 # Pick newest SDK version
 if(DEFINED ENV{WindowsSdkLibVersion})
-  string(REGEX REPLACE "/$" "" CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION "$ENV{WindowsSdkLibVersion}")
+    string(REGEX REPLACE "/$" "" CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION "$ENV{WindowsSdkLibVersion}")
 else()
-  set(_WSI "${CMAKE_WINDOWS_KITS_10_DIR}/Include")
-  file(GLOB _sdks RELATIVE "${_WSI}" "${_WSI}/*")
-  list(SORT _sdks COMPARE NATURAL ORDER DESCENDING)
-  list(GET _sdks 0 CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION)
+    set(_WSI "${CMAKE_WINDOWS_KITS_10_DIR}/Include")
+    file(GLOB _sdks RELATIVE "${_WSI}" "${_WSI}/*")
+    list(SORT _sdks COMPARE NATURAL ORDER DESCENDING)
+    list(GET _sdks 0 CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION)
 endif()
 
 # SDK include and lib paths
@@ -148,40 +130,40 @@ set(_SDK_LIB_UCRT      "${WINDOWS_KITS_LIB_PATH}/ucrt/${CMAKE_VS_PLATFORM_NAME}"
 set(_SDK_LIB_UM        "${WINDOWS_KITS_LIB_PATH}/um/${CMAKE_VS_PLATFORM_NAME}")
 
 ## Set C and C++ compilers and etc
-find_program(CLANG_CL_EXE clang-cl REQUIRED)
-find_program(LLD_LINK_EXE lld-link REQUIRED)
-
-set(CMAKE_C_COMPILER "${CLANG_CL_EXE}" CACHE STRING "Clang-cl C Compiler")
-set(CMAKE_CXX_COMPILER "${CLANG_CL_EXE}" CACHE STRING "Clang-cl C++ Compiler")
-set(CMAKE_LINKER "${LLD_LINK_EXE}" CACHE FILEPATH "Clang lld-link linker")
+## Set C and C++ compilers and etc.
+find_program(CMAKE_C_COMPILER                    NAMES clang-cl         REQUIRED DOC "Clang-cl C Compiler")
+find_program(CMAKE_CXX_COMPILER                  NAMES clang-cl         REQUIRED DOC "Clang-cl C++ Compiler")
+find_program(CMAKE_LINKER                        NAMES lld-link         REQUIRED DOC "LLVM Linker")
+find_program(CMAKE_AR                            NAMES llvm-lib         REQUIRED DOC "LLVM Archiver")
+find_program(CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS  NAMES clang-scan-deps  REQUIRED DOC "Clang module dependency scanner")
 
 ## Add includes and libraries
 # Standard include directories (guarded)
 foreach(_p
-    "${VS_TOOLSET_PATH}/include"
-    "${VS_TOOLSET_PATH}/atlmfc/include"
-    "${_SDK_INC_UCRT}"
-    "${_SDK_INC_UM}"
-    "${_SDK_INC_SHARED}"
-    "${_SDK_INC_WINRT}"
-    "${_SDK_INC_CPPWINRT}")
+        "${VS_TOOLSET_PATH}/include"
+        "${VS_TOOLSET_PATH}/atlmfc/include"
+        "${_SDK_INC_UCRT}"
+        "${_SDK_INC_UM}"
+        "${_SDK_INC_SHARED}"
+        "${_SDK_INC_WINRT}"
+        "${_SDK_INC_CPPWINRT}")
     if(EXISTS "${_p}")
         list(APPEND CMAKE_C_STANDARD_INCLUDE_DIRECTORIES   "${_p}")
         list(APPEND CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES "${_p}")
     endif()
 endforeach()
 foreach(LANG C CXX)
-  set(CMAKE_${LANG}_STANDARD_INCLUDE_DIRECTORIES
-      "${CMAKE_${LANG}_STANDARD_INCLUDE_DIRECTORIES}" CACHE STRING "" FORCE)
+    set(CMAKE_${LANG}_STANDARD_INCLUDE_DIRECTORIES
+            "${CMAKE_${LANG}_STANDARD_INCLUDE_DIRECTORIES}" CACHE STRING "" FORCE)
 endforeach()
 
 # Standard library search. Prefer /LIBPATH so each target gets it reliably.
 set(_LIBPATHS)
 foreach(_p
-    "${VS_TOOLSET_PATH}/lib/${CMAKE_VS_PLATFORM_NAME}"
-    "${VS_TOOLSET_PATH}/ATLMFC/lib/${CMAKE_VS_PLATFORM_NAME}"
-    "${_SDK_LIB_UCRT}"
-    "${_SDK_LIB_UM}")
+        "${VS_TOOLSET_PATH}/lib/${CMAKE_VS_PLATFORM_NAME}"
+        "${VS_TOOLSET_PATH}/ATLMFC/lib/${CMAKE_VS_PLATFORM_NAME}"
+        "${_SDK_LIB_UCRT}"
+        "${_SDK_LIB_UM}")
     if(_p AND EXISTS "${_p}")
         list(APPEND _LIBPATHS "${_p}")
     endif()
@@ -190,16 +172,22 @@ endforeach()
 if(_LIBPATHS)
     foreach(LANG C CXX)
         set(CMAKE_${LANG}_STANDARD_LINK_DIRECTORIES
-        "${_LIBPATHS}" CACHE STRING "Default link directories" FORCE)
+                "${_LIBPATHS}" CACHE STRING "Default link directories" FORCE)
     endforeach()
 endif()
+
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 ## Set flags
 foreach(LANG C CXX)
     set(CMAKE_${LANG}_FLAGS_INIT "${CMAKE_${LANG}_FLAGS_INIT} /X") # ignore %INCLUDE%
 endforeach()
-set(CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT} /W4 /WX /Zc:__cplusplus /Zc:preprocessor /Zc:externConstexpr /Zc:throwingNew /permissive- /volatile:iso /EHsc")
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-# Export compile_commands.json for tooling
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "Enable compilation database")
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL ARM)
+    set(CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT} /EHsc")
+endif()
+
+# A bit of a hack to be able to use presets easily with CLion
+if(DEFINED ENV{CLION_IDE} AND "$ENV{CLION_IDE}" STREQUAL "TRUE")
+    string(APPEND CMAKE_CXX_FLAGS " -Wno-reserved-macro-identifier -Wno-unused-macros")
+endif()

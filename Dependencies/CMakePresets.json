@@ -15,29 +15,24 @@
 				"CMAKE_CXX_STANDARD_REQUIRED": "ON",
 				"CMAKE_CXX_EXTENSIONS": "OFF",
 				"CMAKE_CXX_SCAN_FOR_MODULES": "OFF",
-				"CMAKE_PREFIX_PATH" : "${sourceDir}/Dependencies/install/${presetName}"
+				"CMAKE_PREFIX_PATH" : "${sourceDir}/install/${presetName}",
+				"CMAKE_INSTALL_PREFIX" : "${sourceDir}/install/${presetName}"
 			}
 		},
 		{
 			"name": "windows",
 			"hidden": true,
 			"cmakeExecutable": "C:/Program Files/CMake/bin/cmake.exe",
-			"cacheVariables": {
-				"CMAKE_CXX_FLAGS_INIT": "-DNOMINMAX -D_USE_MATH_DEFINES -m64 -mavx2 -mavx -mbmi -mfma"
-			},
 			"condition": {
 				"type": "equals",
 				"lhs": "${hostSystemName}",
 				"rhs": "Windows"
 			}
 		},
-{
+		{
 			"name": "linux",
 			"hidden": true,
-			"toolchainFile": "${sourceDir}/CMake/Toolchains/x64-linux-clang.cmake",
-			"cacheVariables": {
-				"CMAKE_CXX_FLAGS_INIT": "-DNOMINMAX -D_USE_MATH_DEFINES"
-			},
+			"toolchainFile": "${sourceParentDir}/CMake/Toolchains/x64-linux-clang.cmake",
 			"condition": {
 				"type": "equals",
 				"lhs": "${hostSystemName}",
@@ -67,23 +62,23 @@
 			"hidden": true,
 			"generator": "Visual Studio 18 2026",
 			"cacheVariables": {
-				"CMAKE_CXX_FLAGS": "/Zc:__cplusplus /Zc:preprocessor /Zc:externConstexpr /Zc:throwingNew /permissive- /volatile:iso /EHsc /Oi /arch:AVX2"
+				"CMAKE_CXX_FLAGS": "/Zc:__cplusplus /Zc:preprocessor /Zc:externConstexpr /Zc:throwingNew /permissive- /volatile:iso /EHsc"
 			}
 		},
 		{
 			"name": "clang-cl",
 			"hidden": true,
-			"toolchainFile": "${sourceDir}/CMake/Toolchains/x64-windows-clang-cl.cmake",
+			"toolchainFile": "${sourceParentDir}/CMake/Toolchains/x64-windows-clang-cl.cmake",
 			"cacheVariables": {
-				"CMAKE_CXX_FLAGS": "/Zc:__cplusplus /permissive- /volatile:iso /EHsc /Oi /arch:AVX2"
+				"CMAKE_CXX_FLAGS": "/Zc:__cplusplus /permissive- /volatile:iso /EHsc"
 			}
 		},
 		{
 			"name": "msvc",
 			"hidden": true,
-			"toolchainFile": "${sourceDir}/CMake/Toolchains/x64-windows-msvc.cmake",
+			"toolchainFile": "${sourceParentDir}/CMake/Toolchains/x64-windows-msvc.cmake",
 			"cacheVariables": {
-				"CMAKE_CXX_FLAGS": "/Zc:__cplusplus /Zc:preprocessor /Zc:externConstexpr /Zc:throwingNew /permissive- /volatile:iso /EHsc /Oi /arch:AVX2"
+				"CMAKE_CXX_FLAGS": "/Zc:__cplusplus /Zc:preprocessor /Zc:externConstexpr /Zc:throwingNew /permissive- /volatile:iso /EHsc"
 			}
 		},
 		{
@@ -119,13 +114,13 @@
 		{
 			"name": "linux-clang-x64-debug",
 			"displayName": "Linux x64 debug, Clang with Ninja",
-			"description": "64-bit debug build using Ninja and clang on Linux",
+			"description": "64-bit debug build using Ninja and Clang on Linux",
 			"inherits": [ "base", "linux", "debug", "ninja" ]
 		},
 		{
 			"name": "linux-clang-x64-release",
 			"displayName": "Linux x64 release, Clang with Ninja",
-			"description": "64-bit release build using Ninja and clang on Linux",
+			"description": "64-bit release build using Ninja and Clang on Linux",
 			"inherits": [ "base", "linux", "release", "ninja" ]
 		}
 	],
@@ -157,22 +152,6 @@
 		{
 			"name": "build-linux-clang-x64-release",
 			"configurePreset": "linux-clang-x64-release"
-		}
-	],
-	"testPresets": [
-		{
-			"name": "test-win-clang-x64-debug",
-			"configurePreset": "win-clang-x64-debug",
-			"output": {
-				"outputOnFailure": true
-			}
-		},
-		{
-			"name": "test-msvc-x64-debug",
-			"configurePreset": "win-msvc-ninja-x64-debug",
-			"output": {
-				"outputOnFailure": true
-			}
 		}
 	]
 }

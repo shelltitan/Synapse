@@ -1,7 +1,9 @@
 cmake_minimum_required(
-	VERSION 4.0.0 
+	VERSION 4.2.0 
 	FATAL_ERROR
 )
+
+include(CMake/UniversalAppleBuild.cmake)
 
 project(
 	Synapse
@@ -9,16 +11,16 @@ project(
     VERSION 0.0.1
 )
 
+include(CMake/StandardProjectSettings.cmake)
+include(GNUInstallDirs)
+include(CMake/StaticAnalyzers.cmake)
+
 set(CMAKE_DEBUG_POSTFIX "d")
 
 option(BUILD_TESTS "Build unit tests for the libraries" OFF)
 option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" OFF)
 
-include(GNUInstallDirs)
-
-include(cmake/DocumentationGeneration.cmake)
-include(cmake/Dependencies.cmake)
-include(cmake/SanitizerConfig.cmake)
+include(CMake/DocumentationGeneration.cmake)
 
 #add_subdirectory(Config)
 #add_subdirectory(Console)
