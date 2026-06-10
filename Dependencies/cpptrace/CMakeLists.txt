@@ -1,0 +1,39 @@
+cmake_minimum_required(
+	VERSION 4.2.0
+	FATAL_ERROR
+)
+
+project(external-cpptrace
+	VERSION v1.0.4
+	DESCRIPTION "Simple, portable, and self-contained stacktrace library for C++11 and newer"
+	HOMEPAGE_URL "https://github.com/jeremy-rifkin/cpptrace"
+)
+include(ExternalProject)
+
+list(APPEND CMAKE_ARGS
+		"-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}"
+		"-DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}"
+		"-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+		"-DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}"
+		"-DCMAKE_CXX_STANDARD_REQUIRED=${CMAKE_CXX_STANDARD_REQUIRED}"
+		"-DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}"
+		"-DCMAKE_CXX_SCAN_FOR_MODULES=${CMAKE_CXX_SCAN_FOR_MODULES}"
+		"-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=${CMAKE_INTERPROCEDURAL_OPTIMIZATION}"
+		"-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}"
+		"-DCPPTRACE_POSITION_INDEPENDENT_CODE=OFF"
+        "-DCPPTRACE_STD_FORMAT=ON"
+        "-DBUILD_SHARED_LIBS=OFF"
+)
+
+message(STATUS "Preparing external project \"cpptrace\" with args:")
+foreach(CMAKE_ARG ${CMAKE_ARGS})
+	message(STATUS "-- ${CMAKE_ARG}")
+endforeach()
+
+ExternalProject_add(
+		cpptrace
+		GIT_REPOSITORY https://github.com/jeremy-rifkin/cpptrace.git
+		GIT_TAG v1.0.4
+		PREFIX cpptrace
+		CMAKE_ARGS ${CMAKE_ARGS}
+)
