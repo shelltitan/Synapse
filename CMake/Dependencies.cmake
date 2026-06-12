@@ -1,45 +1,5 @@
 include(FetchContent)
 
-FetchContent_Declare(
-    cpptrace
-    GIT_REPOSITORY https://github.com/jeremy-rifkin/cpptrace.git
-    GIT_TAG v1.0.4
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
-    EXCLUDE_FROM_ALL TRUE
-)
-FetchContent_MakeAvailable(cpptrace)
-
-FetchContent_Declare(
-    unordered_dense
-    GIT_REPOSITORY https://github.com/martinus/unordered_dense.git
-    GIT_TAG v4.8.1
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
-    EXCLUDE_FROM_ALL TRUE
-)
-FetchContent_MakeAvailable(unordered_dense)
-
-FetchContent_Declare(
-    spdlog
-    GIT_REPOSITORY https://github.com/gabime/spdlog.git
-    GIT_TAG v1.17.0
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
-    EXCLUDE_FROM_ALL TRUE
-)
-FetchContent_MakeAvailable(spdlog)
-
-FetchContent_Declare(
-    tracy
-    GIT_REPOSITORY https://github.com/wolfpld/tracy.git
-    GIT_TAG v0.13.1
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
-    EXCLUDE_FROM_ALL TRUE
-)
-FetchContent_MakeAvailable(tracy)
-
 if(NOT tomlplusplus_FOUND)
     FetchContent_Declare(
         tomlplusplus
@@ -64,12 +24,6 @@ if(NOT libassert_FOUND)
 		GIT_TAG main
 	)
 	FetchContent_MakeAvailable(libassert)
-endif()
-
-set(sodium_USE_STATIC_LIBS ON)
-find_package(libsodium QUIET)
-if(libsodium_FOUND)
-    message(STATUS "Using libsodium via find_package")
 endif()
 
 if (BUILD_TESTS)
