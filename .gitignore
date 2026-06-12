@@ -14,3 +14,5 @@ cmake-build-*
 /out
 
 CMakeUserPresets.json
+/Dependencies/build
+/Dependencies/install

@@ -4,7 +4,7 @@ cmake_minimum_required(
 )
 
 project(external-cpptrace
-	VERSION v1.0.4
+	VERSION 1.0.4
 	DESCRIPTION "Simple, portable, and self-contained stacktrace library for C++11 and newer"
 	HOMEPAGE_URL "https://github.com/jeremy-rifkin/cpptrace"
 )
