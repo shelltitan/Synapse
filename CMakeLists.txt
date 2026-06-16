@@ -23,6 +23,13 @@ option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation 
 
 include(CMake/DocumentationGeneration.cmake)
 
+find_package(spdlog REQUIRED)
+find_package(cpptrace REQUIRED)
+find_package(libassert REQUIRED)
+find_package(libsodium REQUIRED)
+find_package(tracy REQUIRED)
+find_package(unordered_dense REQUIRED)
+
 #add_subdirectory(Config)
 #add_subdirectory(Console)
 add_subdirectory(FileSystem)

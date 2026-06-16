@@ -42,4 +42,5 @@ ExternalProject_add(
     GIT_TAG v2.2.1
     PREFIX libassert
     CMAKE_ARGS "${CMAKE_ARGS}"
+    DEPENDS cpptrace
 )
