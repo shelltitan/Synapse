@@ -1,5 +1,6 @@
 set(
     Header_Files
+    "include/AlignmentUtility.hpp"
     "include/AllocationUtility.hpp"
     "include/Allocator/BuddyAllocator.hpp"
     "include/Allocator/FreeListAllocator.hpp"
@@ -20,6 +21,7 @@ set(
 
 set(
     Source_Files
+    "source/AlignmentUtility.cpp"
     "source/AllocationUtility.cpp"
     "source/Allocator/BuddyAllocator.cpp"
     "source/Allocator/FreeListAllocator.cpp"
@@ -47,17 +49,17 @@ source_group(
     FILES ${Source_Files}
 )
 
-add_library(Alloc)
+add_library(Memory)
 
 set_target_properties(
-    Alloc
+    Memory
     PROPERTIES 
     FOLDER ${PROJECT_NAME}
     DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX}
 )
 
 target_sources(
-    Alloc
+    Memory
     PRIVATE 
     ${Source_Files}
     PUBLIC 
@@ -67,7 +69,7 @@ target_sources(
 )
 
 target_link_libraries(
-    Alloc
+    Memory
     PUBLIC 
     TracyClient
     libassert::assert
@@ -75,8 +77,8 @@ target_link_libraries(
 )
 
 install(
-    TARGETS Alloc
+    TARGETS Memory
     EXPORT ${PROJECT_NAME}Targets
-    FILE_SET HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/Alloc"
-    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/Alloc"
+    FILE_SET HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/Memory"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/Memory"
 )

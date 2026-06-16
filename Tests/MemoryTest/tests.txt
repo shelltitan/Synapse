@@ -1,0 +1,4 @@
+Test edge cases e.g. runing out of memory do we get no memory return
+Test if allocation aligment would overflow do we get out of memory return
+To reduce cost of the allocation in release we could strip the overflow logic, or only have asserts in the debug build
+Remove overflow check in release build, e.g. branches, in linear allocator we could use smaller than size_t to track offset or size

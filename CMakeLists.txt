@@ -14,6 +14,7 @@ project(
 include(CMake/StandardProjectSettings.cmake)
 include(GNUInstallDirs)
 include(CMake/StaticAnalyzers.cmake)
+include(CMake/PreventInSourceBuilds.cmake)
 
 set(CMAKE_DEBUG_POSTFIX "d")
 

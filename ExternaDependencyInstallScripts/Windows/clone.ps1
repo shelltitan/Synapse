@@ -5,13 +5,7 @@ param(
 # List of git repository URLs
 $RepoUrls = @(
     "https://github.com/catchorg/Catch2.git",
-	"https://github.com/jeremy-rifkin/cpptrace.git",
-    "https://github.com/jeremy-rifkin/libassert.git",
-    "https://github.com/shelltitan/libsodium-cmake.git",
-    "https://github.com/gabime/spdlog.git",
-    "https://github.com/wolfpld/tracy.git",
-    "https://github.com/marzer/tomlplusplus.git",
-    "https://github.com/martinus/unordered_dense.git"
+    "https://github.com/marzer/tomlplusplus.git"
 )
 
 # Normalise and set the working directory

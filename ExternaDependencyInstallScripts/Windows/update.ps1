@@ -7,9 +7,7 @@ param(
 # Get all subdirectories
 $folders = @(
     "Catch2",
-    "libassert",
-    "libsodium-cmake",
-    "tomlplusplus",
+    "tomlplusplus"
 )
 
 $buildPath = "build-ninja-$($BuildType.ToLower())"
@@ -26,19 +24,6 @@ foreach ($folder in $folders) {
 		Remove-Item $buildDir -Recurse -Force
 	}
 }
-
-Write-Host "`n=== Processing libsodium ===" -ForegroundColor Cyan
-Set-Location -Path "libsodium-cmake"
-git submodule update --init --recursive
-
-cmake `
-    -G "Ninja" `
-    -B "$buildPath" `
-    "-DCMAKE_BUILD_TYPE=$BuildType" `
-    "-DCMAKE_TOOLCHAIN_FILE=$ToolchainFile"
-
-cmake --build "$buildPath"
-cmake --install "$buildPath"
 
 Set-Location -Path $RootDir
 
@@ -78,27 +63,3 @@ cmake `
 
 cmake --build "$buildPath"
 cmake --install "$buildPath"
-
-Set-Location -Path $RootDir
-
-Write-Host "`n=== Processing libassert ===" -ForegroundColor Cyan
-Set-Location -Path "libassert"
-git pull
-
-cmake `
-    -G "Ninja" `
-    -B "$buildPath" `
-    "-DCMAKE_CXX_STANDARD=23" `
-    "-DCMAKE_CXX_STANDARD_REQUIRED=ON" `
-    "-DCMAKE_CXX_EXTENSIONS=OFF" `
-    "-DCMAKE_CXX_SCAN_FOR_MODULES=ON" `
-    "-DCMAKE_BUILD_TYPE=$BuildType" `
-    "-DCMAKE_TOOLCHAIN_FILE=$ToolchainFile" `
-    "-DLIBASSERT_USE_EXTERNAL_CPPTRACE=TRUE" `
-    "-DLIBASSERT_STATIC_DEFINE=TRUE"
-
-cmake --build "$buildPath"
-cmake --install "$buildPath"
-
-# Return to orginal calling location
-Set-Location -Path $currentPath

@@ -12,20 +12,6 @@ if(NOT tomlplusplus_FOUND)
     FetchContent_MakeAvailable(tomlplusplus)
 endif()
 
-find_package(libassert QUIET)
-if(libassert_FOUND)
-    message(STATUS "Using libassert via find_package")
-endif()
-
-if(NOT libassert_FOUND)
-	FetchContent_Declare(
-		libassert
-		GIT_REPOSITORY https://github.com/jeremy-rifkin/libassert.git
-		GIT_TAG main
-	)
-	FetchContent_MakeAvailable(libassert)
-endif()
-
 if (BUILD_TESTS)
     find_package(Catch2 3 CONFIG QUIET)
     if(Catch2_FOUND)
