@@ -1,157 +1,157 @@
 ﻿{
-	"version": 10,
-	"cmakeMinimumRequired": {
-		"major": 4,
-		"minor": 2,
-		"patch": 0
-	},
-	"configurePresets": [
-		{
-			"name": "base",
-			"hidden": true,
-			"binaryDir": "${sourceDir}/build/${presetName}",
-			"cacheVariables": {
-				"CMAKE_CXX_STANDARD": "23",
-				"CMAKE_CXX_STANDARD_REQUIRED": "ON",
-				"CMAKE_CXX_EXTENSIONS": "OFF",
-				"CMAKE_CXX_SCAN_FOR_MODULES": "OFF",
-				"CMAKE_PREFIX_PATH" : "${sourceDir}/install/${presetName}",
-				"CMAKE_INSTALL_PREFIX" : "${sourceDir}/install/${presetName}"
-			}
-		},
-		{
-			"name": "windows",
-			"hidden": true,
-			"cmakeExecutable": "C:/Program Files/CMake/bin/cmake.exe",
-			"condition": {
-				"type": "equals",
-				"lhs": "${hostSystemName}",
-				"rhs": "Windows"
-			}
-		},
-		{
-			"name": "linux",
-			"hidden": true,
-			"toolchainFile": "${sourceParentDir}/CMake/Toolchains/x64-linux-clang.cmake",
-			"condition": {
-				"type": "equals",
-				"lhs": "${hostSystemName}",
-				"rhs": "Linux"
-			}
-		},
-		{
-			"name": "debug",
-			"hidden": true,
-			"cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
-		},
-		{
-			"name": "release",
-			"hidden": true,
-			"cacheVariables": {
-				"CMAKE_BUILD_TYPE": "Release",
-				"CMAKE_INTERPROCEDURAL_OPTIMIZATION": "ON"
-			}
-		},
-		{
-			"name": "ninja",
-			"hidden": true,
-			"generator": "Ninja"
-		},
-		{
-			"name": "vs",
-			"hidden": true,
-			"generator": "Visual Studio 18 2026",
-			"cacheVariables": {
-				"CMAKE_CXX_FLAGS": "/Zc:__cplusplus /Zc:preprocessor /Zc:externConstexpr /Zc:throwingNew /permissive- /volatile:iso /EHsc"
-			}
-		},
-		{
-			"name": "clang-cl",
-			"hidden": true,
-			"toolchainFile": "${sourceParentDir}/CMake/Toolchains/x64-windows-clang-cl.cmake",
-			"cacheVariables": {
-				"CMAKE_CXX_FLAGS": "/Zc:__cplusplus /permissive- /volatile:iso /EHsc"
-			}
-		},
-		{
-			"name": "msvc",
-			"hidden": true,
-			"toolchainFile": "${sourceParentDir}/CMake/Toolchains/x64-windows-msvc.cmake",
-			"cacheVariables": {
-				"CMAKE_CXX_FLAGS": "/Zc:__cplusplus /Zc:preprocessor /Zc:externConstexpr /Zc:throwingNew /permissive- /volatile:iso /EHsc"
-			}
-		},
-		{
-			"name": "win-clang-x64-debug",
-			"displayName": "Windows x64 debug, Clang-cl with Ninja",
-			"description": "64-bit debug build using Clang-cl and Ninja on Windows",
-			"inherits": [ "base", "windows", "debug", "ninja", "clang-cl" ]
-		},
-		{
-			"name": "win-clang-x64-release",
-			"displayName": "Windows x64 release, Clang-cl with Ninja",
-			"description": "64-bit release build using Clang-cl and Ninja on Windows",
-			"inherits": [ "base", "windows", "release", "ninja", "clang-cl" ]
-		},
-		{
-			"name": "win-msvc-ninja-x64-debug",
-			"displayName": "Windows x64 debug, MSVC with Ninja",
-			"description": "64-bit debug build using MSVC and Ninja on Windows",
-			"inherits": [ "base", "windows", "debug", "ninja", "msvc" ]
-		},
-		{
-			"name": "win-msvc-ninja-x64-release",
-			"displayName": "Windows x64 release, MSVC with Ninja",
-			"description": "64-bit release build using MSVC and Ninja on Windows",
-			"inherits": [ "base", "windows", "release", "ninja", "msvc" ]
-		},
-		{
-			"name": "win-msvc-vs-x64-multiconfig",
-			"displayName": "Windows x64 multiconfig, MSVC with Visual Studio 18 2026",
-			"description": "64-bit multiconfig build using MSVC and Visual Studio 18 2026 on Windows",
-			"inherits": [ "base", "windows", "vs" ]
-		},
-		{
-			"name": "linux-clang-x64-debug",
-			"displayName": "Linux x64 debug, Clang with Ninja",
-			"description": "64-bit debug build using Ninja and Clang on Linux",
-			"inherits": [ "base", "linux", "debug", "ninja" ]
-		},
-		{
-			"name": "linux-clang-x64-release",
-			"displayName": "Linux x64 release, Clang with Ninja",
-			"description": "64-bit release build using Ninja and Clang on Linux",
-			"inherits": [ "base", "linux", "release", "ninja" ]
-		}
-	],
-	"buildPresets": [
-		{
-			"name": "build-win-clang-x64-debug",
-			"configurePreset": "win-clang-x64-debug"
-		},
-		{
-			"name": "build-win-clang-x64-release",
-			"configurePreset": "win-clang-x64-release"
-		},
-		{
-			"name": "build-win-msvc-ninja-x64-debug",
-			"configurePreset": "win-msvc-ninja-x64-debug"
-		},
-		{
-			"name": "build-win-msvc-ninja-x64-release",
-			"configurePreset": "win-msvc-ninja-x64-release"
-		},
-		{
-			"name": "build-win-msvc-vs-x64-multiconfig",
-			"configurePreset": "win-msvc-vs-x64-multiconfig"
-		},
-		{
-			"name": "build-linux-clang-x64-debug",
-			"configurePreset": "linux-clang-x64-debug"
-		},
-		{
-			"name": "build-linux-clang-x64-release",
-			"configurePreset": "linux-clang-x64-release"
-		}
-	]
+    "version": 10,
+    "cmakeMinimumRequired": {
+        "major": 4,
+        "minor": 2,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_CXX_STANDARD": "23",
+                "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+                "CMAKE_CXX_EXTENSIONS": "OFF",
+                "CMAKE_CXX_SCAN_FOR_MODULES": "OFF",
+                "CMAKE_PREFIX_PATH" : "${sourceDir}/install/${presetName}",
+                "CMAKE_INSTALL_PREFIX" : "${sourceDir}/install/${presetName}"
+            }
+        },
+        {
+            "name": "windows",
+            "hidden": true,
+            "cmakeExecutable": "C:/Program Files/CMake/bin/cmake.exe",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "linux",
+            "hidden": true,
+            "toolchainFile": "${sourceParentDir}/CMake/Toolchains/x64-linux-clang.cmake",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "debug",
+            "hidden": true,
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+        },
+        {
+            "name": "release",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "ON"
+            }
+        },
+        {
+            "name": "ninja",
+            "hidden": true,
+            "generator": "Ninja"
+        },
+        {
+            "name": "vs",
+            "hidden": true,
+            "generator": "Visual Studio 18 2026",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS": "/Zc:__cplusplus /Zc:preprocessor /Zc:externConstexpr /Zc:throwingNew /permissive- /volatile:iso /EHsc"
+            }
+        },
+        {
+            "name": "clang-cl",
+            "hidden": true,
+            "toolchainFile": "${sourceParentDir}/CMake/Toolchains/x64-windows-clang-cl.cmake",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS": "/Zc:__cplusplus /permissive- /volatile:iso /EHsc"
+            }
+        },
+        {
+            "name": "msvc",
+            "hidden": true,
+            "toolchainFile": "${sourceParentDir}/CMake/Toolchains/x64-windows-msvc.cmake",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS": "/Zc:__cplusplus /Zc:preprocessor /Zc:externConstexpr /Zc:throwingNew /permissive- /volatile:iso /EHsc"
+            }
+        },
+        {
+            "name": "win-clang-x64-debug",
+            "displayName": "Windows x64 debug, Clang-cl with Ninja",
+            "description": "64-bit debug build using Clang-cl and Ninja on Windows",
+            "inherits": [ "base", "windows", "debug", "ninja", "clang-cl" ]
+        },
+        {
+            "name": "win-clang-x64-release",
+            "displayName": "Windows x64 release, Clang-cl with Ninja",
+            "description": "64-bit release build using Clang-cl and Ninja on Windows",
+            "inherits": [ "base", "windows", "release", "ninja", "clang-cl" ]
+        },
+        {
+            "name": "win-msvc-ninja-x64-debug",
+            "displayName": "Windows x64 debug, MSVC with Ninja",
+            "description": "64-bit debug build using MSVC and Ninja on Windows",
+            "inherits": [ "base", "windows", "debug", "ninja", "msvc" ]
+        },
+        {
+            "name": "win-msvc-ninja-x64-release",
+            "displayName": "Windows x64 release, MSVC with Ninja",
+            "description": "64-bit release build using MSVC and Ninja on Windows",
+            "inherits": [ "base", "windows", "release", "ninja", "msvc" ]
+        },
+        {
+            "name": "win-msvc-vs-x64-multiconfig",
+            "displayName": "Windows x64 multiconfig, MSVC with Visual Studio 18 2026",
+            "description": "64-bit multiconfig build using MSVC and Visual Studio 18 2026 on Windows",
+            "inherits": [ "base", "windows", "vs" ]
+        },
+        {
+            "name": "linux-clang-x64-debug",
+            "displayName": "Linux x64 debug, Clang with Ninja",
+            "description": "64-bit debug build using Ninja and Clang on Linux",
+            "inherits": [ "base", "linux", "debug", "ninja" ]
+        },
+        {
+            "name": "linux-clang-x64-release",
+            "displayName": "Linux x64 release, Clang with Ninja",
+            "description": "64-bit release build using Ninja and Clang on Linux",
+            "inherits": [ "base", "linux", "release", "ninja" ]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "build-win-clang-x64-debug",
+            "configurePreset": "win-clang-x64-debug"
+        },
+        {
+            "name": "build-win-clang-x64-release",
+            "configurePreset": "win-clang-x64-release"
+        },
+        {
+            "name": "build-win-msvc-ninja-x64-debug",
+            "configurePreset": "win-msvc-ninja-x64-debug"
+        },
+        {
+            "name": "build-win-msvc-ninja-x64-release",
+            "configurePreset": "win-msvc-ninja-x64-release"
+        },
+        {
+            "name": "build-win-msvc-vs-x64-multiconfig",
+            "configurePreset": "win-msvc-vs-x64-multiconfig"
+        },
+        {
+            "name": "build-linux-clang-x64-debug",
+            "configurePreset": "linux-clang-x64-debug"
+        },
+        {
+            "name": "build-linux-clang-x64-release",
+            "configurePreset": "linux-clang-x64-release"
+        }
+    ]
 }

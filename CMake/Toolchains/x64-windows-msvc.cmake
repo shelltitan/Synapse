@@ -7,15 +7,15 @@ if((NOT (CMAKE_HOST_SYSTEM_NAME STREQUAL Windows)) OR (NOT (CMAKE_HOST_SYSTEM_PR
     return()
 endif()
 list(APPEND CMAKE_TRY_COMPILE_PLATFORM_VARIABLES
-        CMAKE_SYSTEM_PROCESSOR
-        CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE
-        CMAKE_VS_PLATFORM_NAME
-        MSVS_INSTALL_PATH
-        CMAKE_VS_PLATFORM_TOOLSET_VERSION
-        CMAKE_WINDOWS_KITS_10_DIR
-        CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION
-        CMAKE_CXX_SCAN_FOR_MODULES
-        VS_TOOLSET_PATH
+    CMAKE_SYSTEM_PROCESSOR
+    CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE
+    CMAKE_VS_PLATFORM_NAME
+    MSVS_INSTALL_PATH
+    CMAKE_VS_PLATFORM_TOOLSET_VERSION
+    CMAKE_WINDOWS_KITS_10_DIR
+    CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION
+    CMAKE_CXX_SCAN_FOR_MODULES
+    VS_TOOLSET_PATH
 )
 
 # This is for the Visual Studio Generator
@@ -33,21 +33,21 @@ set(CMAKE_CXX_COMPILER_TARGET x86_64-pc-windows-msvc)
 # MSVC installation path and finding toolset (compiler, linker, etc.) and some libraries
 # Locate Visual Studio via vswhere
 find_program(
-        VSWHERE_EXECUTABLE
-        NAMES vswhere vswhere.exe
-        DOC "Visual Studio Locator"
-        HINTS "$ENV{ProgramFiles\(x86\)}/Microsoft Visual Studio/Installer"
-        REQUIRED
+    VSWHERE_EXECUTABLE
+    NAMES vswhere vswhere.exe
+    DOC "Visual Studio Locator"
+    HINTS "$ENV{ProgramFiles\(x86\)}/Microsoft Visual Studio/Installer"
+    REQUIRED
 )
 
 message(CHECK_START "Searching for Visual Studio")
 execute_process(COMMAND "${VSWHERE_EXECUTABLE}" -nologo -nocolor
-        -format json
-        -latest # unfortunately this not the latest but the last installed or updated version
-        -utf8
-        ENCODING UTF-8
-        OUTPUT_VARIABLE _vs_json
-        OUTPUT_STRIP_TRAILING_WHITESPACE
+    -format json
+    -latest # unfortunately this not the latest but the last installed or updated version
+    -utf8
+    ENCODING UTF-8
+    OUTPUT_VARIABLE _vs_json
+    OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
 string(JSON _len LENGTH "${_vs_json}")
@@ -77,10 +77,10 @@ set(VS_TOOLSET_PATH "${MSVS_MSVC_PATH}/${CMAKE_VS_PLATFORM_TOOLSET_VERSION}")
 # Windows SDK Path (C runtime and system libraries)
 message(CHECK_START "Searching for Windows SDK Root Directory")
 cmake_host_system_information(
-        RESULT CMAKE_WINDOWS_KITS_10_DIR
-        QUERY
-        WINDOWS_REGISTRY "HKLM/SOFTWARE/Microsoft/Windows Kits/Installed Roots" VALUE "KitsRoot10" VIEW BOTH
-        ERROR_VARIABLE _wsdk_err
+    RESULT CMAKE_WINDOWS_KITS_10_DIR
+    QUERY
+    WINDOWS_REGISTRY "HKLM/SOFTWARE/Microsoft/Windows Kits/Installed Roots" VALUE "KitsRoot10" VIEW BOTH
+    ERROR_VARIABLE _wsdk_err
 )
 if(_wsdk_err OR NOT CMAKE_WINDOWS_KITS_10_DIR)
     message(CHECK_FAIL "not found: ${_wsdk_err}")
@@ -145,13 +145,13 @@ find_program(MDMERGE_TOOL            NAMES mdmerge       DOC "MSVC MDMERGE" HINT
 ## Add includes and libraries
 # Standard include directories (guarded)
 foreach(_p
-        "${VS_TOOLSET_PATH}/include"
-        "${VS_TOOLSET_PATH}/atlmfc/include"
-        "${_SDK_INC_UCRT}"
-        "${_SDK_INC_UM}"
-        "${_SDK_INC_SHARED}"
-        "${_SDK_INC_WINRT}"
-        "${_SDK_INC_CPPWINRT}")
+    "${VS_TOOLSET_PATH}/include"
+    "${VS_TOOLSET_PATH}/atlmfc/include"
+    "${_SDK_INC_UCRT}"
+    "${_SDK_INC_UM}"
+    "${_SDK_INC_SHARED}"
+    "${_SDK_INC_WINRT}"
+    "${_SDK_INC_CPPWINRT}")
     if(EXISTS "${_p}")
         list(APPEND CMAKE_C_STANDARD_INCLUDE_DIRECTORIES   "${_p}")
         list(APPEND CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES "${_p}")
@@ -161,16 +161,16 @@ foreach(_p
 endforeach()
 foreach(LANG C CXX RC ASM_MASM)
     set(CMAKE_${LANG}_STANDARD_INCLUDE_DIRECTORIES
-            "${CMAKE_${LANG}_STANDARD_INCLUDE_DIRECTORIES}" CACHE STRING "" FORCE)
+        "${CMAKE_${LANG}_STANDARD_INCLUDE_DIRECTORIES}" CACHE STRING "" FORCE)
 endforeach()
 
 # Standard library search. Prefer /LIBPATH so each target gets it reliably.
 set(_LIBPATHS)
 foreach(_p
-        "${VS_TOOLSET_PATH}/lib/${CMAKE_VS_PLATFORM_NAME}"
-        "${VS_TOOLSET_PATH}/ATLMFC/lib/${CMAKE_VS_PLATFORM_NAME}"
-        "${_SDK_LIB_UCRT}"
-        "${_SDK_LIB_UM}")
+    "${VS_TOOLSET_PATH}/lib/${CMAKE_VS_PLATFORM_NAME}"
+    "${VS_TOOLSET_PATH}/ATLMFC/lib/${CMAKE_VS_PLATFORM_NAME}"
+    "${_SDK_LIB_UCRT}"
+    "${_SDK_LIB_UM}")
     if(_p AND EXISTS "${_p}")
         list(APPEND _LIBPATHS "${_p}")
     endif()
@@ -179,7 +179,7 @@ endforeach()
 if(_LIBPATHS)
     foreach(LANG C CXX RC ASM_MASM)
         set(CMAKE_${LANG}_STANDARD_LINK_DIRECTORIES
-                "${_LIBPATHS}" CACHE STRING "Default link directories" FORCE)
+            "${_LIBPATHS}" CACHE STRING "Default link directories" FORCE)
     endforeach()
 endif()
 
@@ -187,23 +187,23 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 # Set 'CMAKE_<LANG>_COMPILER_PREDEFINES_COMMAND' to allow consumers - like automoc - to obtain the compiler predefines.
 set(CMAKE_CXX_COMPILER_PREDEFINES_COMMAND
-        ${CMAKE_CXX_COMPILER}
-        /nologo
-        /Zc:preprocessor
-        /PD
-        /c
-        /Fonul.
-        ${CMAKE_ROOT}/Modules/CMakeCXXCompilerABI.cpp
+    ${CMAKE_CXX_COMPILER}
+    /nologo
+    /Zc:preprocessor
+    /PD
+    /c
+    /Fonul.
+    ${CMAKE_ROOT}/Modules/CMakeCXXCompilerABI.cpp
 )
 
 set(CMAKE_C_COMPILER_PREDEFINES_COMMAND
-        ${CMAKE_C_COMPILER}
-        /nologo
-        /Zc:preprocessor
-        /PD
-        /c
-        /Fonul.
-        ${CMAKE_ROOT}/Modules/CMakeCCompilerABI.c
+    ${CMAKE_C_COMPILER}
+    /nologo
+    /Zc:preprocessor
+    /PD
+    /c
+    /Fonul.
+    ${CMAKE_ROOT}/Modules/CMakeCCompilerABI.c
 )
 
 ## Set flags
