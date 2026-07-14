@@ -45,6 +45,9 @@ target_link_libraries(
 	tomlplusplus::tomlplusplus
 )
 
+target_compile_features(Config PUBLIC cxx_std_23)
+set_target_properties(Config PROPERTIES CXX_EXTENSIONS OFF)
+
 install(
     TARGETS Config
     EXPORT ${PROJECT_NAME}Targets

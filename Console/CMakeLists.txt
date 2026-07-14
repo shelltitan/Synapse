@@ -40,13 +40,16 @@ target_sources(
 )
 
 target_link_libraries(
-    Console
+        
     PUBLIC 
     Log
 )
 
+target_compile_features(Console PUBLIC cxx_std_23)
+set_target_properties(Console PROPERTIES CXX_EXTENSIONS OFF)
+
 install(
-    TARGETS ${MODULE_NAME}
+    TARGETS Console
     EXPORT ${PROJECT_NAME}Targets
     FILE_SET HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/Console"
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/Console"

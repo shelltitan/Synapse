@@ -15,6 +15,8 @@
 				"CMAKE_CXX_STANDARD_REQUIRED": "ON",
 				"CMAKE_CXX_EXTENSIONS": "OFF",
 				"CMAKE_CXX_SCAN_FOR_MODULES": "OFF",
+				"CMAKE_INTERPROCEDURAL_OPTIMIZATION_DEBUG": "OFF",
+				"CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE": "ON",
 				"CMAKE_PREFIX_PATH" : "${sourceDir}/install/${presetName}",
 				"CMAKE_INSTALL_PREFIX" : "${sourceDir}/install/${presetName}"
 			}
@@ -45,7 +47,10 @@
 		{
 			"name": "debug",
 			"hidden": true,
-			"cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug",
+				"CMAKE_INTERPROCEDURAL_OPTIMIZATION": "OFF"
+			}
 		},
 		{
 			"name": "release",
@@ -65,6 +70,7 @@
 			"hidden": true,
 			"generator": "Visual Studio 18 2026",
 			"cacheVariables": {
+				"CMAKE_CONFIGURATION_TYPES": "Debug;Release",
 				"CMAKE_CXX_FLAGS": "/Zc:__cplusplus /Zc:preprocessor /Zc:externConstexpr /Zc:throwingNew /permissive- /volatile:iso /EHsc /Oi /arch:AVX2"
 			}
 		},

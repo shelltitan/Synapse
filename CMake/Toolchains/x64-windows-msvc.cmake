@@ -43,7 +43,9 @@ find_program(
 message(CHECK_START "Searching for Visual Studio")
 execute_process(COMMAND "${VSWHERE_EXECUTABLE}" -nologo -nocolor
     -format json
-    -latest # unfortunately this not the latest but the last installed or updated version
+    -latest # unfortunately this is the last installed or updated version
+    -products *
+    -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64
     -utf8
     ENCODING UTF-8
     OUTPUT_VARIABLE _vs_json
@@ -67,11 +69,16 @@ cmake_path(CONVERT "${_vs_path}" TO_CMAKE_PATH_LIST _vs_path NORMALIZE)
 message(CHECK_PASS "found: ${_vs_path}")
 set(MSVS_INSTALL_PATH "${_vs_path}" CACHE PATH "Visual Studio Installation Path")
 
-# MSVC toolset folder and version
+# MSVC toolset folder and version. Callers may pin MSVC_TOOLSET_VERSION in a
+# user preset; otherwise the newest installed toolset is selected.
 set(MSVS_MSVC_PATH "${MSVS_INSTALL_PATH}/VC/Tools/MSVC")
 file(GLOB _toolsets RELATIVE "${MSVS_MSVC_PATH}" "${MSVS_MSVC_PATH}/*")
 list(SORT _toolsets COMPARE NATURAL ORDER DESCENDING)
-list(POP_FRONT _toolsets CMAKE_VS_PLATFORM_TOOLSET_VERSION)
+if(DEFINED MSVC_TOOLSET_VERSION AND NOT MSVC_TOOLSET_VERSION STREQUAL "")
+    set(CMAKE_VS_PLATFORM_TOOLSET_VERSION "${MSVC_TOOLSET_VERSION}")
+else()
+    list(POP_FRONT _toolsets CMAKE_VS_PLATFORM_TOOLSET_VERSION)
+endif()
 set(VS_TOOLSET_PATH "${MSVS_MSVC_PATH}/${CMAKE_VS_PLATFORM_TOOLSET_VERSION}")
 
 # Windows SDK Path (C runtime and system libraries)
@@ -89,8 +96,11 @@ endif()
 cmake_path(CONVERT "${CMAKE_WINDOWS_KITS_10_DIR}" TO_CMAKE_PATH_LIST CMAKE_WINDOWS_KITS_10_DIR NORMALIZE)
 message(CHECK_PASS "found: ${CMAKE_WINDOWS_KITS_10_DIR}")
 
-# Pick newest SDK version
-if(DEFINED ENV{WindowsSdkLibVersion})
+# Pick an explicitly requested SDK first, then the developer environment SDK,
+# and finally the newest installed SDK.
+if(DEFINED WINDOWS_SDK_VERSION AND NOT WINDOWS_SDK_VERSION STREQUAL "")
+    set(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION "${WINDOWS_SDK_VERSION}")
+elseif(DEFINED ENV{WindowsSdkLibVersion})
     string(REGEX REPLACE "/$" "" CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION "$ENV{WindowsSdkLibVersion}")
 else()
     set(_WSI "${CMAKE_WINDOWS_KITS_10_DIR}/Include")
@@ -143,7 +153,9 @@ find_program(MIDL_COMPILER           NAMES midl          DOC "MSVC MIDL Compiler
 find_program(MDMERGE_TOOL            NAMES mdmerge       DOC "MSVC MDMERGE" HINTS "${_SDK_BIN}")
 
 ## Add includes and libraries
-# Standard include directories (guarded)
+# Standard include directories (guarded). Construct a fresh list so repeated
+# configure runs do not append another copy to cached CMake variables.
+set(_STANDARD_INCLUDE_DIRECTORIES)
 foreach(_p
     "${VS_TOOLSET_PATH}/include"
     "${VS_TOOLSET_PATH}/atlmfc/include"
@@ -153,15 +165,13 @@ foreach(_p
     "${_SDK_INC_WINRT}"
     "${_SDK_INC_CPPWINRT}")
     if(EXISTS "${_p}")
-        list(APPEND CMAKE_C_STANDARD_INCLUDE_DIRECTORIES   "${_p}")
-        list(APPEND CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES "${_p}")
-        list(APPEND CMAKE_RC_STANDARD_INCLUDE_DIRECTORIES  "${_p}")
-        list(APPEND CMAKE_ASM_MASM_STANDARD_INCLUDE_DIRECTORIES "${_p}")
+        list(APPEND _STANDARD_INCLUDE_DIRECTORIES "${_p}")
     endif()
 endforeach()
+list(REMOVE_DUPLICATES _STANDARD_INCLUDE_DIRECTORIES)
 foreach(LANG C CXX RC ASM_MASM)
     set(CMAKE_${LANG}_STANDARD_INCLUDE_DIRECTORIES
-        "${CMAKE_${LANG}_STANDARD_INCLUDE_DIRECTORIES}" CACHE STRING "" FORCE)
+        "${_STANDARD_INCLUDE_DIRECTORIES}" CACHE STRING "" FORCE)
 endforeach()
 
 # Standard library search. Prefer /LIBPATH so each target gets it reliably.
@@ -179,7 +189,7 @@ endforeach()
 if(_LIBPATHS)
     foreach(LANG C CXX RC ASM_MASM)
         set(CMAKE_${LANG}_STANDARD_LINK_DIRECTORIES
-            "${_LIBPATHS}" CACHE STRING "Default link directories" FORCE)
+                "${_LIBPATHS}" CACHE STRING "Default link directories" FORCE)
     endforeach()
 endif()
 

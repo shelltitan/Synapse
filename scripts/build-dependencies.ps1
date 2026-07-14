@@ -1,7 +1,9 @@
 param(
     [switch]$Clean,
-    [Parameter(ValueFromRemainingArguments = $true)]
-    [string[]]$Preset
+    [Parameter(Position = 0, ValueFromRemainingArguments = $true)]
+    [string[]]$Preset,
+    [ValidateSet('Debug', 'Release')]
+    [string[]]$Configuration
 )
 
 $ErrorActionPreference = 'Stop'
@@ -48,6 +50,7 @@ Usage:
   ./scripts/build-dependencies.ps1                 # configure+build ALL configure presets
   ./scripts/build-dependencies.ps1 <preset> [...]  # configure+build only the given presets
   ./scripts/build-dependencies.ps1 -Clean <preset> # delete build/install for the preset, then configure+build
+  ./scripts/build-dependencies.ps1 -Configuration Release <preset>
   ./scripts/build-dependencies.ps1 --list          # list available configure presets
 
 Env:
@@ -72,6 +75,18 @@ if ($presetsToRun.Count -eq 0) {
 }
 
 foreach ($presetName in $presetsToRun) {
+    $presetConfiguration = if ($presetName -match '(?i)-debug$') {
+        'Debug'
+    }
+    elseif ($presetName -match '(?i)-release$') {
+        'Release'
+    }
+
+    if ($Configuration.Count -gt 0 -and $presetConfiguration -and
+        ($Configuration.Count -ne 1 -or $Configuration[0] -ine $presetConfiguration)) {
+        throw "Preset '$presetName' is a $presetConfiguration single-config preset; requested configuration(s): $($Configuration -join ', ')."
+    }
+
     Write-Host "==> [$presetName] configure"
 
     $buildDir = Join-Path $srcDir "build/$presetName"
@@ -98,9 +113,23 @@ foreach ($presetName in $presetsToRun) {
         exit $LASTEXITCODE
     }
 
-    Write-Host "==> [$presetName] build"
-    & cmake --build $buildDir
-    if ($LASTEXITCODE -ne 0) {
-        exit $LASTEXITCODE
+    $configurationsToBuild = if ($Configuration.Count -gt 0) {
+        $Configuration
+    }
+    elseif ($presetConfiguration) {
+        @($presetConfiguration)
+    }
+    else {
+        # Multi-config presets must install both runtime variants because the
+        # main project can be built in either configuration.
+        @('Debug', 'Release')
+    }
+
+    foreach ($config in $configurationsToBuild) {
+        Write-Host "==> [$presetName] build $config"
+        & cmake --build $buildDir --config $config
+        if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+        }
     }
 }

@@ -76,6 +76,9 @@ target_link_libraries(
     Log
 )
 
+target_compile_features(Memory PUBLIC cxx_std_23)
+set_target_properties(Memory PROPERTIES CXX_EXTENSIONS OFF)
+
 install(
     TARGETS Memory
     EXPORT ${PROJECT_NAME}Targets

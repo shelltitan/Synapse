@@ -47,6 +47,9 @@ target_link_libraries(
     unordered_dense::unordered_dense
 )
 
+target_compile_features(FileSystem PUBLIC cxx_std_23)
+set_target_properties(FileSystem PROPERTIES CXX_EXTENSIONS OFF)
+
 install(
     TARGETS FileSystem
     EXPORT ${PROJECT_NAME}Targets

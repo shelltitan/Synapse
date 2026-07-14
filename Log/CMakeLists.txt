@@ -47,6 +47,9 @@ target_link_libraries(
     FileSystem
 )
 
+target_compile_features(Log PUBLIC cxx_std_23)
+set_target_properties(Log PROPERTIES CXX_EXTENSIONS OFF)
+
 install(
     TARGETS Log
     EXPORT ${PROJECT_NAME}Targets

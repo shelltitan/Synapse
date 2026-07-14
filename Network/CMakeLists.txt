@@ -74,6 +74,9 @@ target_link_libraries(
     libassert::assert
 )
 
+target_compile_features(Network PUBLIC cxx_std_23)
+set_target_properties(Network PROPERTIES CXX_EXTENSIONS OFF)
+
 install(
     TARGETS Network
     EXPORT ${PROJECT_NAME}Targets

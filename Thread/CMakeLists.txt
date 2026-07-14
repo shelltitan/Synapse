@@ -65,6 +65,9 @@ target_link_libraries(
     unordered_dense::unordered_dense
 )
 
+target_compile_features(Thread PUBLIC cxx_std_23)
+set_target_properties(Thread PROPERTIES CXX_EXTENSIONS OFF)
+
 install(
     TARGETS Thread
     EXPORT ${PROJECT_NAME}Targets

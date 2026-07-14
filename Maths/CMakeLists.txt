@@ -39,6 +39,9 @@ target_sources(
     FILES ${Header_Files}
 )
 
+target_compile_features(Maths PUBLIC cxx_std_23)
+set_target_properties(Maths PROPERTIES CXX_EXTENSIONS OFF)
+
 install(
     TARGETS Maths
     EXPORT ${PROJECT_NAME}Targets

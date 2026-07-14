@@ -55,6 +55,9 @@ target_link_libraries(
     Maths
 )
 
+target_compile_features(STL PUBLIC cxx_std_23)
+set_target_properties(STL PROPERTIES CXX_EXTENSIONS OFF)
+
 install(
     TARGETS STL
     EXPORT ${PROJECT_NAME}Targets

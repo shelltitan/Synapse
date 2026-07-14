@@ -48,6 +48,9 @@ target_link_libraries(
     libassert::assert
 )
 
+target_compile_features(Utility PUBLIC cxx_std_23)
+set_target_properties(Utility PROPERTIES CXX_EXTENSIONS OFF)
+
 install(
     TARGETS Utility
     EXPORT ${PROJECT_NAME}Targets

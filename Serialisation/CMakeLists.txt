@@ -58,6 +58,9 @@ target_link_libraries(
     libassert::assert
 )
 
+target_compile_features(Serialisation PUBLIC cxx_std_23)
+set_target_properties(Serialisation PROPERTIES CXX_EXTENSIONS OFF)
+
 install(
     TARGETS Serialisation
     EXPORT ${PROJECT_NAME}Targets
