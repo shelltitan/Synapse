@@ -32,5 +32,6 @@ ExternalProject_add(
     GIT_REPOSITORY https://github.com/wolfpld/tracy.git
     GIT_TAG v0.13.1
     PREFIX tracy
+    GIT_SHALLOW TRUE
     CMAKE_ARGS ${CMAKE_ARGS}
 )

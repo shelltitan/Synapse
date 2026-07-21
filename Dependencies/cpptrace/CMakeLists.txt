@@ -41,5 +41,6 @@ ExternalProject_add(
     GIT_REPOSITORY https://github.com/jeremy-rifkin/cpptrace.git
     GIT_TAG v1.0.4
     PREFIX cpptrace
+    GIT_SHALLOW TRUE
     CMAKE_ARGS ${CMAKE_ARGS}
 )

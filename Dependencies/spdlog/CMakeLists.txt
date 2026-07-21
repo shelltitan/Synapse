@@ -32,5 +32,6 @@ ExternalProject_add(
     GIT_REPOSITORY https://github.com/gabime/spdlog.git
     GIT_TAG v1.17.0
     PREFIX spdlog
+    GIT_SHALLOW TRUE
     CMAKE_ARGS "${CMAKE_ARGS}"
 )

@@ -34,5 +34,6 @@ ExternalProject_add(
     GIT_REPOSITORY https://github.com/shelltitan/libsodium-cmake.git
     GIT_TAG main
     PREFIX libsodium
+    GIT_SHALLOW TRUE
     CMAKE_ARGS "${CMAKE_ARGS}"
 )
