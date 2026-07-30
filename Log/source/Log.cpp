@@ -35,7 +35,7 @@ namespace Synapse::Log {
         InitialiseCrashHandler();
     }
 
-#ifdef WIN32
+#ifdef _WIN32
     auto Log::CrashHandler([[maybe_unused]] int sig) -> void {
         // Generate trace
         std::ofstream crash_file;
@@ -61,7 +61,7 @@ namespace Synapse::Log {
         cpptrace::safe_object_frame frame{};
         cpptrace::get_safe_object_frame(buffer[0], &frame);
 
-#ifdef WIN32
+#ifdef _WIN32
         (void)signal(SIGSEGV, &Log::CrashHandler);
         (void)signal(SIGABRT, &Log::CrashHandler);
 #else
