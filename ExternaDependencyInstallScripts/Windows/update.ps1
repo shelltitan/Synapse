@@ -1,32 +1,3 @@
-param(
-    [string]$RootDir = ".",
-    [string]$BuildType = "Debug",
-    [string]$ToolchainFile = ""
-)
-
-# Get all subdirectories
-$folders = @(
-    "Catch2",
-    "tomlplusplus"
-)
-
-$buildPath = "build-ninja-$($BuildType.ToLower())"
-
-$currentPath = Get-Location
-
-# Normalise and set the working directory
-$RootDir = Resolve-Path -Path $RootDir
-Set-Location -Path $RootDir
-
-foreach ($folder in $folders) {
-	$buildDir = Join-Path -Path $folder -ChildPath $buildPath
-    if (Test-Path -Path $buildDir) {
-		Remove-Item $buildDir -Recurse -Force
-	}
-}
-
-Set-Location -Path $RootDir
-
 Write-Host "`n=== Processing tomlplusplus ===" -ForegroundColor Cyan
 Set-Location -Path "tomlplusplus"
 git pull
@@ -46,20 +17,3 @@ cmake --build "$buildPath"
 cmake --install "$buildPath"
 
 Set-Location -Path $RootDir
-
-Write-Host "`n=== Processing Catch2 ===" -ForegroundColor Cyan
-Set-Location -Path "Catch2"
-git pull
-
-cmake `
-    -G "Ninja" `
-    -B "$buildPath" `
-    "-DCMAKE_CXX_STANDARD=23" `
-    "-DCMAKE_CXX_STANDARD_REQUIRED=ON" `
-    "-DCMAKE_CXX_EXTENSIONS=OFF" `
-    "-DCMAKE_CXX_SCAN_FOR_MODULES=ON" `
-    "-DCMAKE_BUILD_TYPE=$BuildType" `
-    "-DCMAKE_TOOLCHAIN_FILE=$ToolchainFile"
-
-cmake --build "$buildPath"
-cmake --install "$buildPath"

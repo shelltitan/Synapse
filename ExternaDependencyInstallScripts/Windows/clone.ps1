@@ -7,20 +7,3 @@ $RepoUrls = @(
     "https://github.com/catchorg/Catch2.git",
     "https://github.com/marzer/tomlplusplus.git"
 )
-
-# Normalise and set the working directory
-$RootDir = Resolve-Path -Path $RootDir
-Set-Location -Path $RootDir
-
-foreach ($url in $RepoUrls) {
-    # Extract repo name from the URL (e.g., 'Catch2' from '.../Catch2.git')
-    $repoName = ($url -split '/' | Select-Object -Last 1) -replace '\.git$', ''
-
-    if (Test-Path $repoName) {
-        Write-Host "Directory '$repoName' already exists. Skipping..." -ForegroundColor Yellow
-        continue
-    }
-
-    Write-Host "Cloning $url into folder '$repoName'..." -ForegroundColor Cyan
-    git clone $url $repoName
-}
